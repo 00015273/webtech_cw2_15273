@@ -1,0 +1,17 @@
+nav.navbar.navbar-expand-lg.navbar-light.bg-light 
+    .container-fluid 
+        a.navbar-brand Comments Putter  
+
+        ul.nav.align-items-center.pl-2
+            
+            label.m-2(for="cats") Choose category  
+            li.d-flex
+                select.form-select#cats(aria-label="Default select example")
+                    option(name="category" value="0") All
+                    option(name="category" value="1") Business
+                    option(name="category" value="2") IT
+                    option(name="category" value="3") Law 
+                    option(name="category" value="4") Medical
+
+            li.nav-item.ms-3  
+                a.btn.btn-success Create New 
