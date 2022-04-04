@@ -1,7 +1,7 @@
 //third-Part libraries 
 const express = require('express')
-// const { all } = require('express/lib/application')
 const app = express()
+const { body, validationResult } = require('express-validator')
 
 // PORT
 const PORT = process.env.PORT || 8000
@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 8000
 const db = require('./data/database')
 const Article = require('./data/models')
 
-db.sync({ force: true }).then(() => "Db is binded successfully..." )
+db.sync({ force: false }).then(() => "Db is binded successfully..." )
 
 // SET UP
 app.set('view engine', 'pug')
@@ -20,19 +20,19 @@ app.use('/static', express.static('public'))
 // ROOT URL
 app.get('/', async function(req,res){
     let articles = null
+    let categories = {
+        0: "Business",
+        1: "IT",
+        2: "Law",
+        3: "Medical"
+    } 
 
     try{
         articles = await Article.findAll()
-
         let id = req.query.id != undefined ? req.query.id : undefined
-        let isDeleted = req.query.isDeleted == 'true' ? true : false
-        let isUpdated = req.query.isUpdated == 'true' ? true : false
-
         res.render('index', {
             articles: articles,
-            id: id,
-            deleted: isDeleted,
-            updated: isUpdated
+            categories: categories
         })
         // console.log(articles)
     } catch {
@@ -48,22 +48,64 @@ app.get('/createNew', (req, res) => {
 })
 
 // CREATE post req
-app.post('/create-article', async (req,res) => {
-    let formArticle = req.body
-    const article = await Article.create(formArticle)
-    res.redirect(`/?id=${ article.id }`)
+app.post('/create-article',
+    body("title").isLength({ min: 1 }).withMessage("Title must not be empty"),
+    body("category").isLength({ min: 1 }).withMessage("Please choose category"),
+    body("description").isLength({ min: 10 }).withMessage("Description must contain at least 10 characters"),
+    async (req,res) => {
+        
+        const err = validationResult(req)
+        let titleError = null
+        let categoryError = null
+        let descriptionError = null
+        if(!err.isEmpty()) {
+            const errors = err.array()
+            for (error of errors){
+                console.log(error);
+                if (error.param == "title") {
+                    titleError = error.msg
+                }
+                if (error.param == "category") {
+                    categoryError = error.msg
+                }
+                if (error.param == "description") {
+                    descriptionError = error.msg
+                }
+            }
+            
+            res.render('createUpdate', { 
+                titleError: titleError,
+                categoryError: categoryError,
+                descriptionError: descriptionError
+            })
+
+        } else {
+            let formArticle = req.body
+            const article = await Article.create(formArticle)
+            res.redirect(`/?id=${ article.id }`)
+        }
 }) 
 
 // EDITING get-req
 app.get(`/edit-article/:id`, async (req,res) => {
     let id = req.params.id
     let article = await Article.findByPk(id)
-    res.render('createUpdate', { article: article })
+    let categories = {
+        0: "Business",
+        1: "IT",
+        2: "Law",
+        3: "Medical"
+    } 
+    res.render('createUpdate', { 
+        article: article,
+        categories: categories
+    })
 })
 
 // POSTING UPDATE REQ
 app.post('/update-article/:id', async (req, res) => {
     let id = req.params.id
+
     let result = await Article.update({
         title: req.body.title,
         category: req.body.category,

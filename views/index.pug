@@ -10,7 +10,8 @@ block content
                         button.accordion-button.d-flex.justify-content-end(type="button" data-bs-toggle="collapse" data-bs-target=`#collapse${ article.id }` aria-expanded="true" aria-controls=`collapse${ article.id }`) #{ article.title }
                     .accordion-collapse.collapse(id=`collapse${ article.id }` aria-labelledby=`#collapse${ article.id }` data-bs-parent="#articles")
                         .accordion-body
-                            p.article-title #{ article.category } 
+                            if categories[article.category]
+                                p.article-title #{ categories[article.category] } 
                             p.w-100.text-justify.text-break #{ article.description }
                         .controls.d-flex.justify-content-end
                                 a.py-3.text-secondary(href=`/edit-article/${ article.id }`)

@@ -3,45 +3,54 @@ extends layout.pug
 block content 
     if article 
         p.createTitle.mt-3 Update Article
-        form.w-75(action=`/update-article/${ article.id }` method="POST")
-            .form-group.mb-2
+        form.w-100(action=`/update-article/${ article.id }` method="POST")
+            .form-group.mb-4
                 label(for="title") Title
                 input.form-control#title(type="text" name="title" placeholder="Enter Title" value= article.title)
-                small#emailHelp.form-text.text-muted We'll never share your email
+                if titleError    
+                    small.form-text.text-danger= titleError
             .form-group.mb-4
                 label(for="category")
-                select#category.form-control(name="category" value= article.category)
-                    option(selected disabled) Choose category
+                select#category.form-control(name="category")
+                    if categories
+                        option(selected="selected")= categories[article.category] 
                     option(value="0") Business 
                     option(value="1") IT
                     option(value="2") Law
                     option(value="3") Medical
+                if categoryError    
+                    small.form-text.text-danger= categoryError
             .form-group.mb-4
                 label(for="description") Description 
-                textarea.form-control#description(name="description" cols="20" rows="10" placeholder="Enter Description")= article.description
-                small#description.form-text.text-muted We'll never share your email
+                textarea.form-control#description(name="description" cols="20" rows="7" placeholder="Enter Description")= article.description
+                if descriptionError    
+                    small.form-text.text-danger= descriptionError
             
             button.btn.btn-success(type="submit") Update
 
 
     else
         p.createTitle.mt-3 Create Article
-        form.w-75(action="/create-article" method="POST")
-            .form-group.mb-2
+        form.w-100(action="/create-article" method="POST")
+            .form-group.mb-4
                 label(for="title") Title
                 input.form-control#title(type="text" name="title" placeholder="Enter Title")
-                small#emailHelp.form-text.text-muted We'll never share your email
+                if titleError    
+                    small.form-text.text-danger= titleError
             .form-group.mb-4
-                label(for="category")
+                label(for="category") Category
                 select#category.form-control(name="category")
                     option(selected disabled) Choose category
                     option(value="0") Business 
                     option(value="1") IT
                     option(value="2") Law
                     option(value="3") Medical
+                if categoryError    
+                    small.form-text.text-danger= categoryError
             .form-group.mb-4
                 label(for="description") Description 
-                textarea.form-control#description(name="description" cols="20" rows="10" placeholder="Enter Description")
-                small#description.form-text.text-muted We'll never share your email
+                textarea.form-control#description(name="description" cols="20" rows="7" placeholder="Enter Description")
+                if descriptionError    
+                    small.form-text.text-danger= descriptionError
             
             button.btn.btn-primary(type="submit") Create 
