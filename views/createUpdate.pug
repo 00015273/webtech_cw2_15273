@@ -1,0 +1,23 @@
+extends layout.pug 
+
+block content 
+    p.createTitle.mt-3 Create Article
+    form.w-50(action="/create-article" method="POST")
+        .form-group.mb-2
+            label(for="title") Article Title
+            input.form-control#title(type="text" name="title" placeholder="Enter Title")
+            small#emailHelp.form-text.text-muted We'll never share your email with anyone else.
+        .form-group.mb-4
+            label(for="category")
+            select#category.form-control(name="category")
+                option(selected disabled) Choose category
+                option(value="0") Business 
+                option(value="1") IT
+                option(value="2") Law
+                option(value="3") Medical
+        .form-group.mb-4
+            label(for="description") Article Description 
+            input.form-control#description(type="text" name="description" placeholder="Enter Description")
+            small#description.form-text.text-muted We'll never share your email with anyone else.
+        
+        button.btn.btn-primary(type="submit") Create 

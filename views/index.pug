@@ -1,14 +1,20 @@
 extends layout.pug 
 
 block content 
-    h1.heading.text-center Comments 
-    .accordion#accordionExample
-        .accordion-item.mb-3
-            h2.accordion-header#headingOne
-                button.accordion-button(type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne") Accordion Item 1
-            .accordion-collapse.collapse.show#collapseOne(aria-labelledby="headingOne" data-bs-parent="#accordionExample")
-                .accordion-body
-                    b Business Article 
-                    br
-                    span Lorem ipsum dolor sit amet consectetur, adipisicing elit. Pariatur dolorem quaerat doloribus molestias aliquam, repudiandae quae voluptates dolore distinctio odit in sequi rerum harum nemo assumenda nisi voluptate ipsum sapiente.
+    h1.heading.text-center Articles 
+    if (articles.length)
+        each article in articles
+            each n in articles 
+                .accordion#articles
+                    .accordion-item.mb-3
+                        h2.accordion-header(id=`heading${ n }`)
+                            button.accordion-button(type="button" data-bs-toggle="collapse" data-bs-target=`#collapse${ n }` aria-expanded="true" aria-controls=`collapse${ n }`) #{ article.title }
+                        .accordion-collapse.collapse.show(aria-labelledby=`#collapse${ n }` id=`collapse${ n }` data-bs-parent="#articles")
+                            .accordion-body
+                                b #{ article.category } 
+                                br
+                                span #{ article.description }
+    else 
+        p.alert.alert-warning No articles available 
+        a.btn.btn-outline-success(href="/createNew") New Article
 
