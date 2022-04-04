@@ -32,9 +32,10 @@ app.get('/', async function(req,res){
         let id = req.query.id != undefined ? req.query.id : undefined
         res.render('index', {
             articles: articles,
-            categories: categories
+            categories: categories,
         })
-        // console.log(articles)
+
+
     } catch {
         articles = []
         res.render('index', { articles: articles })
@@ -55,7 +56,7 @@ app.post('/create-article',
     async (req,res) => {
         let id = req.params.id
         let article = await Article.findByPk(id)
-
+        // VALIDATION
         const err = validationResult(req)
         let titleError = null
         let categoryError = null
@@ -81,7 +82,7 @@ app.post('/create-article',
                 categoryError: categoryError,
                 descriptionError: descriptionError
             })
-
+            // IF NO ERROR, RENDERING...
         } else {
             let formArticle = req.body
             const article = await Article.create(formArticle)
