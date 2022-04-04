@@ -53,7 +53,9 @@ app.post('/create-article',
     body("category").isLength({ min: 1 }).withMessage("Please choose category"),
     body("description").isLength({ min: 10 }).withMessage("Description must contain at least 10 characters"),
     async (req,res) => {
-        
+        let id = req.params.id
+        let article = await Article.findByPk(id)
+
         const err = validationResult(req)
         let titleError = null
         let categoryError = null
@@ -74,6 +76,7 @@ app.post('/create-article',
             }
             
             res.render('createUpdate', { 
+                article: article,
                 titleError: titleError,
                 categoryError: categoryError,
                 descriptionError: descriptionError
@@ -103,19 +106,62 @@ app.get(`/edit-article/:id`, async (req,res) => {
 })
 
 // POSTING UPDATE REQ
-app.post('/update-article/:id', async (req, res) => {
-    let id = req.params.id
+app.post('/update-article/:id',
+    body("title").isLength({ min: 1 }).withMessage("Title must not be empty"),
+    body("category").isLength({ min: 1 }).withMessage("Please choose category"),
+    body("description").isLength({ min: 10 }).withMessage("Description must contain at least 10 characters"),
 
-    let result = await Article.update({
-        title: req.body.title,
-        category: req.body.category,
-        description: req.body.description
-    }, {
-        where: {
-            id: id
+    async (req, res) => {
+        let id = req.params.id
+        let article = await Article.findByPk(id)
+        let categories = {
+            0: "Business",
+            1: "IT",
+            2: "Law",
+            3: "Medical"
+        } 
+
+        const err = validationResult(req)
+        let titleError = null
+        let categoryError = null
+        let descriptionError = null
+        if(!err.isEmpty()) {
+            const errors = err.array()
+            for (error of errors){
+                console.log(error);
+                if (error.param == "title") {
+                    titleError = error.msg
+                }
+                if (error.param == "category") {
+                    categoryError = error.msg
+                }
+                if (error.param == "description") {
+                    descriptionError = error.msg
+                }
+            }
+            
+            res.render('createUpdate', { 
+                article: article,
+                categories: categories,
+                titleError: titleError,
+                categoryError: categoryError,
+                descriptionError: descriptionError
+            })
+
         }
-    })
+        else {
+            let id = req.params.id
 
+            let result = await Article.update({
+                title: req.body.title,
+                category: req.body.category,
+                description: req.body.description
+            }, {
+                where: {
+                    id: id
+                }
+            })
+        }
     res.redirect(`/?updated=true`)
 })
 
