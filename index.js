@@ -1,5 +1,6 @@
 //third-Part libraries 
 const express = require('express')
+// const { all } = require('express/lib/application')
 const app = express()
 
 // PORT
@@ -33,7 +34,7 @@ app.get('/', async function(req,res){
             deleted: isDeleted,
             updated: isUpdated
         })
-        console.log(articles)
+        // console.log(articles)
     } catch {
         articles = []
         res.render('index', { articles: articles })
@@ -53,6 +54,40 @@ app.post('/create-article', async (req,res) => {
     res.redirect(`/?id=${ article.id }`)
 }) 
 
+// EDITING get-req
+app.get(`/edit-article/:id`, async (req,res) => {
+    let id = req.params.id
+    let article = await Article.findByPk(id)
+    res.render('createUpdate', { article: article })
+})
+
+// POSTING UPDATE REQ
+app.post('/update-article/:id', async (req, res) => {
+    let id = req.params.id
+    let result = await Article.update({
+        title: req.body.title,
+        category: req.body.category,
+        description: req.body.description
+    }, {
+        where: {
+            id: id
+        }
+    })
+
+    res.redirect(`/?updated=true`)
+})
+
+// Delete
+app.get('/delete-article/:id', async (req,res) => {
+    let id = req.params.id
+    let result = await Article.destroy({
+        where: {
+            id: id
+        }
+    })
+
+    res.redirect(`/?deleted=true`)
+})
 
 
 app.listen(PORT, function(){

@@ -4,16 +4,20 @@ block content
     h1.heading.text-center Articles 
     if (articles.length)
         each article in articles
-            each n in articles 
-                .accordion#articles
-                    .accordion-item.mb-3
-                        h2.accordion-header(id=`heading${ n }`)
-                            button.accordion-button(type="button" data-bs-toggle="collapse" data-bs-target=`#collapse${ n }` aria-expanded="true" aria-controls=`collapse${ n }`) #{ article.title }
-                        .accordion-collapse.collapse.show(aria-labelledby=`#collapse${ n }` id=`collapse${ n }` data-bs-parent="#articles")
-                            .accordion-body
-                                b #{ article.category } 
-                                br
-                                span #{ article.description }
+            .accordion#articles
+                .accordion-item
+                    h2.accordion-header#headingOne
+                        button.accordion-button.d-flex.justify-content-end(type="button" data-bs-toggle="collapse" data-bs-target=`#collapse${ article.id }` aria-expanded="true" aria-controls=`collapse${ article.id }`) #{ article.title }
+                    .accordion-collapse.collapse(id=`collapse${ article.id }` aria-labelledby=`#collapse${ article.id }` data-bs-parent="#articles")
+                        .accordion-body
+                            p.article-title #{ article.category } 
+                            p.w-100.text-justify.text-break #{ article.description }
+                        .controls.d-flex.justify-content-end
+                                a.py-3.text-secondary(href=`/edit-article/${ article.id }`)
+                                    i.fa-solid.fa-pen-to-square
+                                a.py-3.mx-3.text-secondary(href=`/delete-article/${ article.id }`)
+                                    i.fa-solid.fa-trash
+                                
     else 
         p.alert.alert-warning No articles available 
         a.btn.btn-outline-success(href="/createNew") New Article
